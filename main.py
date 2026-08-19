@@ -2,18 +2,12 @@ import settings
 import random
 from rich.console import Console
 from rich.table import Table
+from rich.panel import Panel
+from rich import print
 console = Console()
 
 grid = []
-is_race_on = 0
-
-class Car:
-    def __init__(self, driver_name, is_player_controlled, current_tire):
-        self.driver_name = driver_name
-        self.total_race_time = 0
-        self.is_player_controlled = is_player_controlled
-        self.current_tire = current_tire
-
+is_race_on = False
 
 class Tire:
     def __init__(self, type):
@@ -22,6 +16,14 @@ class Tire:
 
     def degrade_tire(self):
         pass
+
+
+class Car:
+    def __init__(self, driver_name, is_player_controlled, current_tire: Tire):
+        self.driver_name = driver_name
+        self.total_race_time = 0
+        self.is_player_controlled = is_player_controlled
+        self.current_tire = current_tire
 
 
 class Track:
@@ -85,7 +87,7 @@ def get_player_tires():
             break
         else:
             print("Must be the number between 1 and 5.")
-    player_tire_compound = Tire(tire_compound)
+    player_tire_compound = Tire(str(tire_compound))
     return player_tire_compound
 
 
@@ -101,11 +103,37 @@ def create_ai_drivers(track: Track):
             else:
                 tire_compound = 5
 
-        ai_car = Car(driver_name = name, is_player_controlled = False, current_tire = tire_compound)
+        ai_tire = Tire(str(tire_compound))
+        ai_car = Car(driver_name = name, is_player_controlled = False, current_tire = ai_tire)
         grid.append(ai_car)
 
 
+def display_starting_screen():
+    print(Panel("F1 PITWALL GAME", expand=False, border_style="red", style="bold white"))
+
+
+def display_grid():
+    if is_race_on:
+        title_to_display = "Live Standings"
+    else:
+        title_to_display = "Grid before the race"
+    table = Table(title=title_to_display)
+    table.add_column("Pos", justify="right", style="cyan")
+    table.add_column("Driver", style="bold white")
+    table.add_column("Tire", style="bold yellow")
+    table.add_column("Wear", justify="right", style="green")
+
+    for pos, driver in enumerate(grid, start=1):
+        name = driver.driver_name
+        current_tire = driver.current_tire
+        wear = driver.current_tire.deg_level
+        table.add_row(str(pos),name, str(current_tire.type), str(wear))
+    print("")
+    console.print(table)
+
 def main():
+    display_starting_screen()
+
     player_name = get_player_name()
 
     track = Track()
@@ -118,7 +146,8 @@ def main():
 
     create_ai_drivers(track)
     
-    #display_starting_screen()
+    display_grid()
+    #start_race()
     
     while True:
         if is_race_on:
