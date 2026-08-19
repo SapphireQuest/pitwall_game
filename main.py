@@ -4,12 +4,16 @@ from rich.console import Console
 from rich.table import Table
 console = Console()
 
+grid = []
+is_race_on = 0
+
 class Car:
-    def __init__(self, driver_name, is_player_controlled):
+    def __init__(self, driver_name, is_player_controlled, current_tire):
         self.driver_name = driver_name
         self.total_race_time = 0
         self.is_player_controlled = is_player_controlled
-        #self.current_tire = Tire()
+        self.current_tire = current_tire
+
 
 class Tire:
     def __init__(self, type):
@@ -25,7 +29,7 @@ class Track:
         tracks = settings.tracks
         self.current_track, self.total_laps = random.choice(list(tracks.items()))
         self.is_dry = random.randint(1,10) >= 3
-        self.water_percentage = 0 if self.is_dry else random.randint(15,85)
+        self.water_percentage = 0 if self.is_dry else random.randint(20,90)
 
 
     def display_before_the_race_info(self):
@@ -50,12 +54,6 @@ class Track:
         console.print(table)
 
 
-
-grid = []
-is_race_on = 1
-
-
-
 def get_player_name():
     while True:
         player_name = input("Provide your driver name: ")
@@ -64,9 +62,6 @@ def get_player_name():
         else:
             print("Length of player name should be between 2 and 20 characters.")
     return player_name
-
-
-
 
 
 def get_player_tires():
@@ -79,7 +74,7 @@ def get_player_tires():
     table.add_row("1", "Soft", "Dry", style="bold red")
     table.add_row("2", "Medium", "Dry", style="bold yellow")
     table.add_row("3", "Hard", "Dry", style="bold white")
-    table.add_row("4", "Inter", "Wet | 25-75%", style="bold green")
+    table.add_row("4", "Inter", "Wet | 20-75%", style="bold green")
     table.add_row("5", "Wet", "Wet | 60-100%", style="bold blue")
 
     console.print(table)
@@ -90,8 +85,24 @@ def get_player_tires():
             break
         else:
             print("Must be the number between 1 and 5.")
-        
-    return tire_compound
+    player_tire_compound = Tire(tire_compound)
+    return player_tire_compound
+
+
+def create_ai_drivers(track: Track):
+    for name in settings.driver_names:
+        if track.is_dry:
+            tire_compound = random.randint(1,3)
+        else:
+            if track.water_percentage <=60:
+                tire_compound = 4
+            elif track.water_percentage > 60 and track.water_percentage <= 75:
+                tire_compound = random.randint(4,5)
+            else:
+                tire_compound = 5
+
+        ai_car = Car(driver_name = name, is_player_controlled = False, current_tire = tire_compound)
+        grid.append(ai_car)
 
 
 def main():
@@ -100,16 +111,14 @@ def main():
     track = Track()
     track.display_before_the_race_info()
 
-    player_tires = get_player_tires()
+    player_tires= get_player_tires()
 
-    player_car = Car(driver_name = player_name, is_player_controlled = True)
+    player_car = Car(driver_name = player_name, is_player_controlled = True, current_tire = player_tires)
     grid.append(player_car)
 
-    for name in settings.driver_names:
-        ai_car = Car(driver_name = name, is_player_controlled = False)
-        grid.append(ai_car)
-
+    create_ai_drivers(track)
     
+    #display_starting_screen()
     
     while True:
         if is_race_on:
