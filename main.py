@@ -8,6 +8,7 @@ console = Console()
 
 grid = []
 is_race_on = False
+current_lap = 1
 
 class Tire:
     def __init__(self, type):
@@ -138,7 +139,11 @@ def start_race():
         return 1
     return 0 
 
+def display_lap():
+    print(Panel(f"LAP {current_lap}", expand=True, border_style="red", style="bold white"))
+
 def main():
+    global is_race_on
     display_starting_screen()
 
     player_name = get_player_name()
@@ -161,12 +166,23 @@ def main():
             print(Panel("NEW RACE", expand=True, border_style="red", style="bold white"))
             grid.clear()
             continue
-        is_race_on = 1
+        is_race_on = True
         break
-    
+
     while True:
         if is_race_on:
-           
+            display_lap()
+            display_grid()
+            # display_current_weather()
+            # display_weather_prediction()
+            # make_decision()
+            # ai_decision()
+            # pit_stop()
+
+
+
+
+
 
             while True:
                 while True:
