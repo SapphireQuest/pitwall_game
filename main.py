@@ -11,7 +11,7 @@ is_race_on = False
 
 class Tire:
     def __init__(self, type):
-        self.type = type
+        self.type = settings.possible_tire_compounds.get(type)
         self.deg_level = 100  #100 max performance, 0 puncture
 
     def degrade_tire(self):
@@ -131,37 +131,42 @@ def display_grid():
     print("")
     console.print(table)
 
+
+def start_race():
+    start_race = input("Start race? (y/n)")
+    if start_race.lower() == "y":
+        return 1
+    return 0 
+
 def main():
     display_starting_screen()
 
     player_name = get_player_name()
 
-    track = Track()
-    track.display_before_the_race_info()
+    while True:
+        track = Track()
+        track.display_before_the_race_info()
 
-    player_tires= get_player_tires()
+        player_tires= get_player_tires()
 
-    player_car = Car(driver_name = player_name, is_player_controlled = True, current_tire = player_tires)
-    grid.append(player_car)
+        player_car = Car(driver_name = player_name, is_player_controlled = True, current_tire = player_tires)
+        grid.append(player_car)
 
-    create_ai_drivers(track)
-    
-    display_grid()
-    #start_race()
+        create_ai_drivers(track)
+        
+        display_grid()
+
+        start = start_race()
+        if start == 0:
+            print(Panel("NEW RACE", expand=True, border_style="red", style="bold white"))
+            grid.clear()
+            continue
+        is_race_on = 1
+        break
     
     while True:
         if is_race_on:
-            # table = Table(title="Live Standings")
-            # table.add_column("Pos", justify="right", style="cyan")
-            # table.add_column("Driver", style="bold white")
-            # table.add_column("Tire", style="bold yellow")
-            # table.add_column("Wear", justify="right", style="green")
-        
-            # table.add_row("1", "Verstappen", "Medium", "85%")
-            # table.add_row("2", "Player", "Soft", "42%") 
-            # table.add_row("3", "Norris", "Hard", "96%")
-
-            # console.print(table)
+           
 
             while True:
                 while True:
