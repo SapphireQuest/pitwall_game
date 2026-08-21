@@ -15,9 +15,14 @@ class Tire:
         self.type = settings.possible_tire_compounds.get(type)
         self.deg_level = 100  #100 max performance, 0 puncture
 
-    def degrade_tire(self):
-        pass
-
+    def degrade_tire(self, decision):
+        if decision == 2:
+            r = random.randint(6,8)
+            self.deg_level -= r
+        elif decision == 1:
+            r = random.randint(3,5)
+            self.deg_level -= r
+            
 
 class Car:
     def __init__(self, driver_name, is_player_controlled, current_tire: Tire):
@@ -25,6 +30,20 @@ class Car:
         self.total_race_time = 0
         self.is_player_controlled = is_player_controlled
         self.current_tire = current_tire
+
+    def drive_lap(self, decision):
+        if decision == 3:
+            # pitstop 
+            pass
+        elif decision == 2:
+            # push
+            r = random.uniform(84.234, 86.753)
+            self.total_race_time += r
+            self.current_tire.degrade_tire(2)
+        elif decision == 1:
+            r = random.uniform(86.903, 90.002)
+            self.total_race_time += r
+            self.current_tire.degrade_tire(1)
 
 
 class Track:
@@ -142,6 +161,31 @@ def start_race():
 def display_lap():
     print(Panel(f"LAP {current_lap}", expand=True, border_style="red", style="bold white"))
 
+
+def make_decision():
+    while True:
+        decision = input("Decision: 1 - Lift and Coast, 2 - Push, 3 - Pit")
+        if not decision.isnumeric():
+            print("Decision must be a number.")
+            continue
+        decision = int(decision)
+
+        if decision in settings.possible_decisions:
+            break
+        else:
+            print("Possible decisions are 1, 2 or 3.")
+
+    if decision == 3:
+        print("Pit Stop")
+        return 3
+    elif decision == 2:
+        print("Push")
+        return 2
+    elif decision == 1:
+        print("Lift and Coast")
+        return 1
+
+
 def main():
     global is_race_on
     display_starting_screen()
@@ -169,13 +213,18 @@ def main():
         is_race_on = True
         break
 
+
     while True:
         if is_race_on:
             display_lap()
             display_grid()
             # display_current_weather()
             # display_weather_prediction()
-            # make_decision()
+            
+            decision = make_decision()  # 3 pitstop, 2 push, 1 lift
+            player_car.drive_lap(decision)
+
+
             # ai_decision()
             # pit_stop()
 
@@ -184,25 +233,7 @@ def main():
 
 
 
-            while True:
-                while True:
-                    decision = input("Decision: 1 - Lift and Coast, 2 - Push, 3 - Pit")
-                    if decision.isnumeric():
-                        break
-                    else:
-                        print("Decision must be a number.")
-                decision = int(decision)
-                if decision in settings.possible_decisions:
-                    break
-                else:
-                    print("Possible decisions are 1, 2 or 3.")
-
-            if decision == 3:
-                print("Pit Stop")
-            elif decision == 2:
-                print("Push")
-            elif decision == 1:
-                print("Lift and Coast")
+            
 
 
 if __name__ == '__main__':
