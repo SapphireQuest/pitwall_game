@@ -11,8 +11,8 @@ is_race_on = False
 current_lap = 1
 
 class Tire:
-    def __init__(self, type):
-        self.type = settings.possible_tire_compounds.get(type)
+    def __init__(self, type_of_compound):
+        self.type_of_compound = settings.possible_tire_compounds.get(type_of_compound)
         self.deg_level = 100  #100 max performance, 0 puncture
 
     def degrade_tire(self, decision):
@@ -147,7 +147,7 @@ def display_grid():
         name = driver.driver_name
         current_tire = driver.current_tire
         wear = driver.current_tire.deg_level
-        table.add_row(str(pos),name, str(current_tire.type), str(wear))
+        table.add_row(str(pos),name, str(current_tire.type_of_compound), str(wear))
     print("")
     console.print(table)
 
@@ -188,6 +188,7 @@ def make_decision():
 
 def main():
     global is_race_on
+    global current_lap
     display_starting_screen()
 
     player_name = get_player_name()
@@ -223,17 +224,17 @@ def main():
             
             decision = make_decision()  # 3 pitstop, 2 push, 1 lift
             player_car.drive_lap(decision)
-
+            
 
             # ai_decision()
             # pit_stop()
+            current_lap += 1
+            if current_lap > track.total_laps:
+                print("RACE END")
+                return 
 
 
 
-
-
-
-            
 
 
 if __name__ == '__main__':
