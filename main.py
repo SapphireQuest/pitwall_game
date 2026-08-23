@@ -79,6 +79,27 @@ class Track:
         console.print(table)
 
 
+    def decide_next_lap_weather(self):
+        if self.is_dry:
+            if random.randint(1,10) > 8:
+                self.water_percentage += random.randint(4,9)
+        elif self.water_percentage < 20:
+            self.water_percentage -= random.randint(6,11)
+            if self.water_percentage < 0: 
+                self.water_percentage = 0
+        elif self.water_percentage >= 20 and self.water_percentage <= 100:
+            if random.randint(1,10) >= 5:
+                self.water_percentage += random.randint(3,10)
+                if self.water_percentage > 100:
+                    self.water_percentage = 100
+            else:
+                self.water_percentage -= random.randint(3,10)
+
+        if self.water_percentage > 0:
+            self.is_dry = False
+
+
+
 def get_player_name():
     while True:
         player_name = input("Provide your driver name: ")
@@ -189,6 +210,7 @@ def make_decision():
         return LIFT
 
 
+
 def main():
     global is_race_on
     global current_lap
@@ -222,6 +244,7 @@ def main():
         if is_race_on:
             display_lap()
             display_grid()
+            
             # display_current_weather()
             # display_weather_prediction()
             
@@ -231,6 +254,7 @@ def main():
 
             # ai_decision()
             # pit_stop()
+            track.decide_next_lap_weather()
             current_lap += 1
             if current_lap > track.total_laps:
                 print("RACE END")
