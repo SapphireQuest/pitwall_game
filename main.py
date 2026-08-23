@@ -6,6 +6,10 @@ from rich.panel import Panel
 from rich import print
 console = Console()
 
+LIFT = 1
+PUSH = 2
+PIT = 3
+
 grid = []
 is_race_on = False
 current_lap = 1
@@ -16,10 +20,10 @@ class Tire:
         self.deg_level = 100  #100 max performance, 0 puncture
 
     def degrade_tire(self, decision):
-        if decision == 2:
+        if decision == PUSH:
             r = random.randint(6,8)
             self.deg_level -= r
-        elif decision == 1:
+        elif decision == LIFT:
             r = random.randint(3,5)
             self.deg_level -= r
             
@@ -32,18 +36,17 @@ class Car:
         self.current_tire = current_tire
 
     def drive_lap(self, decision):
-        if decision == 3:
+        if decision == PIT:
             # pitstop 
             pass
-        elif decision == 2:
-            # push
+        elif decision == PUSH:
             r = random.uniform(84.234, 86.753)
             self.total_race_time += r
-            self.current_tire.degrade_tire(2)
-        elif decision == 1:
+            self.current_tire.degrade_tire(PUSH)
+        elif decision == LIFT:
             r = random.uniform(86.903, 90.002)
             self.total_race_time += r
-            self.current_tire.degrade_tire(1)
+            self.current_tire.degrade_tire(LIFT)
 
 
 class Track:
@@ -155,8 +158,8 @@ def display_grid():
 def start_race():
     start_race = input("Start race? (y/n)")
     if start_race.lower() == "y":
-        return 1
-    return 0 
+        return True
+    return False 
 
 def display_lap():
     print(Panel(f"LAP {current_lap}", expand=True, border_style="red", style="bold white"))
@@ -175,15 +178,15 @@ def make_decision():
         else:
             print("Possible decisions are 1, 2 or 3.")
 
-    if decision == 3:
+    if decision == PIT:
         print("Pit Stop")
-        return 3
-    elif decision == 2:
+        return PIT
+    elif decision == PUSH:
         print("Push")
-        return 2
-    elif decision == 1:
+        return PUSH
+    elif decision == LIFT:
         print("Lift and Coast")
-        return 1
+        return LIFT
 
 
 def main():
@@ -197,7 +200,7 @@ def main():
         track = Track()
         track.display_before_the_race_info()
 
-        player_tires= get_player_tires()
+        player_tires = get_player_tires()
 
         player_car = Car(driver_name = player_name, is_player_controlled = True, current_tire = player_tires)
         grid.append(player_car)
@@ -207,7 +210,7 @@ def main():
         display_grid()
 
         start = start_race()
-        if start == 0:
+        if start is False:
             print(Panel("NEW RACE", expand=True, border_style="red", style="bold white"))
             grid.clear()
             continue
