@@ -49,6 +49,7 @@ def main():
         track = racetrack.Track()
         track.decide_race_weather()
         ui.display_before_the_race_info(track)
+        ui.display_weather_prediction(race_manager.current_lap, track.race_weather, race_manager.is_race_on)
 
         player_tires = ui.get_player_tires()
 
@@ -73,7 +74,7 @@ def main():
         if race_manager.is_race_on:
             ui.display_lap(race_manager.current_lap)
             ui.display_grid(race_manager.is_race_on, race_manager.grid)
-            
+            ui.display_weather_prediction(race_manager.current_lap, track.race_weather, race_manager.is_race_on)
             # display_current_weather()
             # display_weather_prediction()
             

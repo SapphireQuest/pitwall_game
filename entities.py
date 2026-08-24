@@ -41,12 +41,12 @@ class Car:
 
 def create_ai_drivers(track, grid):
     for name in settings.driver_names:
-        if track.water_percentage == 0:
+        if track.race_weather[0] == 0:
             tire_compound = random.randint(1,3)
         else:
-            if track.water_percentage <=60:
+            if track.race_weather[0] <=60:
                 tire_compound = 4
-            elif track.water_percentage > 60 and track.water_percentage <= 75:
+            elif track.race_weather[0] > 60 and track.race_weather[0] <= 75:
                 tire_compound = random.randint(4,5)
             else:
                 tire_compound = 5

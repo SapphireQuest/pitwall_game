@@ -43,6 +43,36 @@ def display_before_the_race_info(track):
         console.print(table)
 
 
+def display_weather_prediction(current_lap, race_weather, is_race_on):
+    total_laps = len(race_weather)
+
+    if not is_race_on:
+        first_predicted_lap = 1
+    else:
+        first_predicted_lap = current_lap + 1
+
+    if first_predicted_lap > total_laps:
+        return
+
+    laps_left_to_predict = total_laps - first_predicted_lap + 1
+    columns_to_draw = min(3, laps_left_to_predict)
+
+    table = Table(title="Weather Prediction")
+    row_data = []
+
+    for i in range(columns_to_draw):
+        lap_number = first_predicted_lap + i
+        weather_value = f"{race_weather[lap_number - 1]}%" 
+        
+        table.add_column(f"Lap {lap_number}", style="bold white", justify="center")
+        row_data.append(weather_value)
+        
+    table.add_row(*row_data) 
+    
+    console.print(table)
+    print("")
+
+
 def get_player_tires():
     # 1 - soft, 2 - med, 3 - hard, 4 - inter, 5 - wet
     table = Table(title="Choose tires")
