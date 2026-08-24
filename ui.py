@@ -120,7 +120,7 @@ def display_grid(is_race_on, grid):
     table.add_column("Driver", style="bold white")
     table.add_column("Tire", style="bold yellow")
     table.add_column("Wear", justify="right", style="green")
-    # table.add_column("Gap to leader")
+    table.add_column("Gap to leader", style="bold white")
     # table.add_column("Last Lap Time")
     # table.add_column("Pit stops")
 
@@ -128,9 +128,27 @@ def display_grid(is_race_on, grid):
         name = driver.driver_name
         current_tire = driver.current_tire
         wear = driver.current_tire.deg_level
-        table.add_row(str(pos),name, str(current_tire.type_of_compound), str(wear))
+        gap_to_leader = get_gap(pos, grid)
+        row_style = ""
+        if driver.is_player_controlled:
+            row_style = "blue_violet"
+
+
+        table.add_row(str(pos),name, str(current_tire.type_of_compound), str(wear), (gap_to_leader), style=row_style)
     print("")
     console.print(table)
+
+
+def get_gap(pos, grid):
+    if pos == 1:
+        return "Leader"
+    else:
+        previous_driver_time = grid[pos-2].total_race_time
+        current_driver_time = grid[pos-1].total_race_time
+        gap = previous_driver_time - current_driver_time
+        return f"+{round(gap, 3)}s"
+
+
 
 def start_race():
     start_race = input("Start race? (y/n)")

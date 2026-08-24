@@ -47,4 +47,3 @@ class Track:
             if self.water_percentage == 0:
                 self.is_dry = True
             self.race_weather.append(self.water_percentage)
-        print(self.race_weather)

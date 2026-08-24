@@ -84,9 +84,11 @@ def main():
 
             # ai_decision()
             # pit_stop()
+            # sort_entities()
             race_manager.current_lap += 1
             if race_manager.current_lap > track.total_laps:
                 print("RACE END")
+                # display_results()
                 return 
 
 
