@@ -25,17 +25,18 @@ class Car:
         self.total_race_time = 0
         self.is_player_controlled = is_player_controlled
         self.current_tire = current_tire
+        self.last_lap_time = 0
 
     def drive_lap(self, decision):
         if decision == PIT: 
             pass
         elif decision == PUSH:
-            r = random.uniform(84.234, 86.753)
-            self.total_race_time += r
+            self.last_lap_time = random.uniform(84.234, 86.753)
+            self.total_race_time += self.last_lap_time
             self.current_tire.degrade_tire(PUSH)
         elif decision == LIFT:
-            r = random.uniform(86.903, 90.002)
-            self.total_race_time += r
+            self.last_lap_time = random.uniform(86.903, 90.002)
+            self.total_race_time += self.last_lap_time
             self.current_tire.degrade_tire(LIFT)
 
 

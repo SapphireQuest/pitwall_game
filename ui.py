@@ -115,26 +115,34 @@ def display_grid(is_race_on, grid):
         title_to_display = "Live Standings"
     else:
         title_to_display = "Grid before the race"
+
     table = Table(title=title_to_display)
     table.add_column("Pos", justify="right", style="cyan")
     table.add_column("Driver", style="bold white")
     table.add_column("Tire", style="bold yellow")
-    table.add_column("Wear", justify="right", style="green")
-    table.add_column("Gap to leader", style="bold white")
-    # table.add_column("Last Lap Time")
-    # table.add_column("Pit stops")
+
+    if is_race_on:
+        table.add_column("Wear", justify="right", style="green")
+        table.add_column("Gap to leader", style="bold white")
+        table.add_column("Last Lap Time", style="cyan")
+        # table.add_column("Pit stops")
 
     for pos, driver in enumerate(grid, start=1):
         name = driver.driver_name
         current_tire = driver.current_tire
-        wear = driver.current_tire.deg_level
-        gap_to_leader = get_gap(pos, grid)
-        row_style = ""
-        if driver.is_player_controlled:
-            row_style = "blue_violet"
+        if is_race_on:
+            wear = driver.current_tire.deg_level
+            gap_to_leader = get_gap(pos, grid)
+            row_style = ""
+            if driver.is_player_controlled:
+                row_style = "blue_violet"
+            last_lap_time = f"{round(driver.last_lap_time, 3)}s"
+        
+        if is_race_on:
+            table.add_row(str(pos),name, str(current_tire.type_of_compound), str(wear), gap_to_leader, last_lap_time, style=row_style)
+        else:
+            table.add_row(str(pos),name, str(current_tire.type_of_compound), style=row_style)
 
-
-        table.add_row(str(pos),name, str(current_tire.type_of_compound), str(wear), (gap_to_leader), style=row_style)
     print("")
     console.print(table)
 
