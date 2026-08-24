@@ -17,7 +17,8 @@ class Race_Manager:
 
 def make_decision():
     while True:
-        decision = input("Decision: 1 - Lift and Coast, 2 - Push, 3 - Pit")
+        print("Decision: 1 - Lift and Coast, 2 - Push, 3 - Pit")
+        decision = input()
         if not decision.isnumeric():
             print("Decision must be a number.")
             continue
@@ -74,9 +75,8 @@ def main():
         if race_manager.is_race_on:
             ui.display_lap(race_manager.current_lap)
             ui.display_grid(race_manager.is_race_on, race_manager.grid)
+            ui.display_current_weather(race_manager.current_lap, track.race_weather)
             ui.display_weather_prediction(race_manager.current_lap, track.race_weather, race_manager.is_race_on)
-            # display_current_weather()
-            # display_weather_prediction()
             
             decision = make_decision()  # 3 pitstop, 2 push, 1 lift
             player_car.drive_lap(decision)

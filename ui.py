@@ -98,6 +98,18 @@ def get_player_tires():
     return player_tire_compound
 
 
+def display_current_weather(current_lap, race_weather):
+    if race_weather[current_lap-1] == 0:
+        weather_style = "bold green"
+    else:
+        weather_style = "bold blue"
+    table = Table(title = "Current Lap Weather")
+    table.add_column("Water Level", justify="center")
+    table.add_row(f"{race_weather[current_lap-1]}%", style=weather_style)
+    console.print(table) 
+
+
+
 def display_grid(is_race_on, grid):
     if is_race_on:
         title_to_display = "Live Standings"
@@ -108,6 +120,9 @@ def display_grid(is_race_on, grid):
     table.add_column("Driver", style="bold white")
     table.add_column("Tire", style="bold yellow")
     table.add_column("Wear", justify="right", style="green")
+    # table.add_column("Gap to leader")
+    # table.add_column("Last Lap Time")
+    # table.add_column("Pit stops")
 
     for pos, driver in enumerate(grid, start=1):
         name = driver.driver_name
