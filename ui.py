@@ -130,6 +130,7 @@ def display_grid(is_race_on, grid):
     for pos, driver in enumerate(grid, start=1):
         name = driver.driver_name
         current_tire = driver.current_tire
+        row_style=""
         if is_race_on:
             wear = driver.current_tire.deg_level
             gap_to_leader = get_gap(pos, grid)
