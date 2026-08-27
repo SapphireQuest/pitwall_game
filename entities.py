@@ -10,13 +10,38 @@ class Tire:
         self.type_of_compound = settings.possible_tire_compounds.get(type_of_compound)
         self.deg_level = 100  #100 max performance, 0 puncture
 
-    def degrade_tire(self, decision):
+    def degrade_tire(self, decision, water_level):
+        tire = self.type_of_compound
+        base_deg = 0
+
+        if tire == "Soft":
+            base_deg = random.randint(8, 10)
+        elif tire == "Medium":
+            base_deg = random.randint(5, 7)
+        elif tire == "Hard":
+            base_deg = random.randint(3, 5)
+
+        elif tire == "Inter":
+            base_deg = random.randint(4, 6)
+            if water_level < 20:
+                base_deg += (20 - water_level) // 2
+            elif water_level > 75:
+                base_deg += (water_level - 75) // 6 
+
+        elif tire == "Wet":
+            base_deg = random.randint(4, 6)
+            if water_level < 20:
+                base_deg += (20 - water_level) // 2
+            elif 20 <= water_level < 60:
+                
+                base_deg += (60 - water_level) // 10
+
         if decision == PUSH:
-            r = random.randint(6,8)
-            self.deg_level -= r
+            base_deg += (base_deg // 5)
         elif decision == LIFT:
-            r = random.randint(3,5)
-            self.deg_level -= r
+            base_deg = (base_deg * 65) // 100 
+
+        self.deg_level = max(0, self.deg_level - base_deg)
             
 
 class Car:
@@ -28,38 +53,59 @@ class Car:
         self.last_lap_time = 0
 
     def drive_lap(self, decision, race_weather, current_lap):
-        water_level = race_weather[current_lap-1]
-        tire = self.current_tire.type_of_compound
-        if decision == PIT: 
-            pass
+        if decision == PIT:
+            pass 
+            return
 
+        water_level = race_weather[current_lap - 1]
+        tire = self.current_tire.type_of_compound
+        deg = self.current_tire.deg_level
+        
+        base_time = 84.0
+        
         if tire in ("Soft", "Medium", "Hard"):
-            if water_level < 20: 
-                min_time, max_time = 84.0, 86.5
-            else: 
-                min_time, max_time = 105.0, 115.0
+            if tire == "Medium": base_time += 0.8
+            elif tire == "Hard": base_time += 1.5
+                
+            if water_level <= 20:
+                base_time += water_level * 0.1 
+            else:
+                base_time += 2.0 + ((water_level - 20) * 0.6) 
                 
         elif tire == "Inter":
+            base_time += 4.5 
             if water_level < 20:
-                min_time, max_time = 89.0, 92.0
+                base_time += (20 - water_level) * 0.3 
             elif 20 <= water_level <= 75:
-                min_time, max_time = 90.0, 93.0
+                base_time += (water_level - 20) * 0.03 
             else:
-                min_time, max_time = 100.0, 105.0
+                base_time += 1.65 + ((water_level - 75) * 0.5) 
                 
         elif tire == "Wet":
+            base_time += 5.5 
             if water_level < 60:
-                min_time, max_time = 94.0, 98.0
+                base_time += (60 - water_level) * 0.25 
             else:
-                min_time, max_time = 95.0, 98.0
-
-        if decision == LIFT:
-            min_time += 2.5
-            max_time += 2.5
+                base_time += (water_level - 60) * 0.02 
+                
+        normal_deg_penalty = (100 - deg) * 0.025
+        
+        if tire in ("Inter", "Wet"):
+            normal_deg_penalty *= 0.5
             
-        self.last_lap_time = random.uniform(min_time, max_time)
+        base_time += normal_deg_penalty
+        
+        if deg < 30:
+            cliff_penalty = (30 - deg) * 0.4
+            base_time += cliff_penalty
+            
+        if decision == LIFT:
+            base_time += 2.5
+            
+        self.last_lap_time = base_time + random.uniform(-0.15, 0.15)
         self.total_race_time += self.last_lap_time
-        self.current_tire.degrade_tire(decision)
+        
+        self.current_tire.degrade_tire(decision, water_level)
 
 
 def create_ai_drivers(track, grid):
