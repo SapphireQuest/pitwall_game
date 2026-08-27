@@ -57,10 +57,10 @@ def main():
             decision = entities.make_decision()  # 3 pitstop, 2 push, 1 lift
             player_car.drive_lap(decision, track.race_weather, race_manager.current_lap)
             
-
-            # ai_decision()
-            # pit_stop()
+            entities.ai_decision(track.race_weather, race_manager.grid, race_manager.current_lap)
+            # check_puncture() 
             # sort_entities()
+            
             race_manager.current_lap += 1
             if race_manager.current_lap > track.total_laps:
                 print("RACE END")

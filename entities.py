@@ -149,3 +149,21 @@ def make_decision():
         print("Lift and Coast")
         return LIFT
 
+
+def ai_decision(race_weather, grid, current_lap):
+    weather_pointer = current_lap - 1
+    water_level = race_weather[weather_pointer]
+    for driver in grid: 
+        if driver.is_player_controlled == True:
+            continue
+        tire = driver.current_tire.type_of_compound
+        good_tire  = False
+        if (tire in ("Soft", "Medium", "Hard") and water_level < 20) or (tire == "Inter" and water_level >= 20 or water_level <= 75) or (tire == "Wet" and water_level >= 60):
+            good_tire = True
+
+        if driver.current_tire.deg_level == 0:
+            pass
+            # pitstop
+
+
+        
