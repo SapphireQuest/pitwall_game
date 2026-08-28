@@ -6,6 +6,18 @@ import entities
 console = Console()
 
 
+def display_results(grid):
+    table = Table(title="After the race standings")
+    table.add_column("Pos", justify="right", style="cyan")
+    table.add_column("Driver", style="bold white")
+    table.add_column("Total Race Time", style="blue")
+
+    for pos,driver in enumerate(grid,start=1):
+        style = ""
+        if driver.is_player_controlled:
+            style = "purple"
+        table.add_row(str(pos), driver.driver_name, str(round(driver.total_race_time,2)), style=style)
+    console.print(table)
 
 def display_starting_screen():
     print(Panel("F1 PITWALL GAME", expand=False, border_style="red", style="bold white"))

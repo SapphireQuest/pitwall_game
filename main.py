@@ -66,7 +66,7 @@ def main():
             race_manager.current_lap += 1
             if race_manager.current_lap > track.total_laps:
                 print("RACE END")
-                # display_results()
+                ui.display_results(race_manager.grid)
                 return 
 
 
