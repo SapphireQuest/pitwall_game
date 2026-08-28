@@ -123,7 +123,7 @@ def display_grid(is_race_on, grid):
 
     if is_race_on:
         table.add_column("Wear", justify="right", style="green")
-        table.add_column("Gap to leader", style="bold white")
+        table.add_column("Interval", style="bold white")
         table.add_column("Last Lap Time", style="cyan")
         # table.add_column("Pit stops")
 
@@ -150,11 +150,11 @@ def display_grid(is_race_on, grid):
 
 def get_gap(pos, grid):
     if pos == 1:
-        return "Leader"
+        return "Interval"
     else:
         previous_driver_time = grid[pos-2].total_race_time
         current_driver_time = grid[pos-1].total_race_time
-        gap = previous_driver_time - current_driver_time
+        gap = current_driver_time - previous_driver_time
         return f"+{round(gap, 3)}s"
 
 

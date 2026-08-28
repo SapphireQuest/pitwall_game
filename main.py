@@ -61,7 +61,7 @@ def main():
             
             entities.ai_decision(track.race_weather, race_manager.grid, race_manager.current_lap)
             
-            # sort_entities()
+            race_manager.grid = entities.sort_entities(race_manager.grid)
             
             race_manager.current_lap += 1
             if race_manager.current_lap > track.total_laps:

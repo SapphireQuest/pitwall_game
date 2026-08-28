@@ -95,10 +95,11 @@ class Car:
             
         base_time += normal_deg_penalty
         
-        if deg < 30:
+        if deg < 30 and deg > 0:
             cliff_penalty = (30 - deg) * 0.4
             base_time += cliff_penalty
-            
+        elif deg == 0:
+            base_time += 50.0
         if decision == LIFT:
             base_time += 2.5
             
@@ -183,4 +184,7 @@ def check_puncture(grid):
 
         if puncture:
             driver.current_tire.deg_level = 0
+
+def sort_entities(grid):
+    return sorted(grid, key = lambda driver: driver.total_race_time) 
         
