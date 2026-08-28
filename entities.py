@@ -161,9 +161,26 @@ def ai_decision(race_weather, grid, current_lap):
         if (tire in ("Soft", "Medium", "Hard") and water_level < 20) or (tire == "Inter" and water_level >= 20 or water_level <= 75) or (tire == "Wet" and water_level >= 60):
             good_tire = True
 
-        if driver.current_tire.deg_level == 0:
+        
+        if driver.current_tire.deg_level <= 35 or good_tire == False:
             pass
             # pitstop
+        else:
+            decision = random.choices([LIFT,PUSH],weights=[20,80])[0]
+            driver.drive_lap(decision, race_weather, current_lap)
 
 
+def check_puncture(grid):
+    for driver in grid:
+        puncture = False
+        deg_level = driver.current_tire.deg_level
+        if deg_level <= 80 and deg_level > 50:
+            puncture = random.choices([True,False],weights=[3,97])[0]
+        elif deg_level <= 50 and deg_level > 30:
+            puncture = random.choices([True,False],weights=[8,92])[0]
+        elif deg_level <= 30:
+            puncture = random.choices([True,False], weights=[90,10])[0]
+
+        if puncture:
+            driver.current_tire.deg_level = 0
         

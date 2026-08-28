@@ -49,16 +49,18 @@ def main():
 
     while True:
         if race_manager.is_race_on:
+            entities.check_puncture(race_manager.grid) 
             ui.display_lap(race_manager.current_lap)
             ui.display_grid(race_manager.is_race_on, race_manager.grid)
             ui.display_current_weather(race_manager.current_lap, track.race_weather)
             ui.display_weather_prediction(race_manager.current_lap, track.race_weather, race_manager.is_race_on)
-            
+            if player_car.current_tire.deg_level == 0:
+                ui.puncture_message() 
             decision = entities.make_decision()  # 3 pitstop, 2 push, 1 lift
             player_car.drive_lap(decision, track.race_weather, race_manager.current_lap)
             
             entities.ai_decision(track.race_weather, race_manager.grid, race_manager.current_lap)
-            # check_puncture() 
+            
             # sort_entities()
             
             race_manager.current_lap += 1

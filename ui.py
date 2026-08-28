@@ -171,3 +171,6 @@ def display_lap(current_lap):
 
 def display_new_race():
     print(Panel("NEW RACE", expand=True, border_style="red", style="bold white"))
+
+def puncture_message():
+    print(Panel("PUNCTURE", expand=False, border_style="white", style=" bold red"))
