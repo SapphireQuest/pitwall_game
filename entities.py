@@ -58,7 +58,7 @@ class Car:
         base_time = 84.0
 
         if decision == PIT:
-            self.do_pit_stop(race_weather=race_weather,current_lap=current_lap)
+            self.do_pit_stop(race_weather,current_lap)
             self.number_of_pit_stops += 1 
             pit_time = random.uniform(22.5, 25.0)
             base_time += pit_time
