@@ -1,5 +1,6 @@
 import random
 import settings
+import ui
 
 LIFT = settings.LIFT
 PUSH = settings.PUSH
@@ -15,7 +16,7 @@ class Tire:
         base_deg = 0
 
         if tire == "Soft":
-            base_deg = random.randint(8, 10)
+            base_deg = random.randint(7, 11)
         elif tire == "Medium":
             base_deg = random.randint(5, 7)
         elif tire == "Hard":
@@ -51,17 +52,22 @@ class Car:
         self.is_player_controlled = is_player_controlled
         self.current_tire = current_tire
         self.last_lap_time = 0
+        self.number_of_pit_stops = 0
 
     def drive_lap(self, decision, race_weather, current_lap):
+        base_time = 84.0
+
         if decision == PIT:
-            pass 
-            return
+            self.do_pit_stop(race_weather=race_weather,current_lap=current_lap)
+            self.number_of_pit_stops += 1 
+            pit_time = random.uniform(22.5, 25.0)
+            base_time += pit_time
+            
 
         water_level = race_weather[current_lap - 1]
         tire = self.current_tire.type_of_compound
         deg = self.current_tire.deg_level
         
-        base_time = 84.0
         
         if tire in ("Soft", "Medium", "Hard"):
             if tire == "Medium": base_time += 0.8
@@ -107,6 +113,37 @@ class Car:
         self.total_race_time += self.last_lap_time
         
         self.current_tire.degrade_tire(decision, water_level)
+
+    def do_pit_stop(self, race_weather, current_lap):
+        if self.is_player_controlled:
+            what_tire = decide_tires_pit_stop()
+            self.current_tire.type_of_compound = settings.possible_tire_compounds.get(what_tire)
+            self.current_tire.deg_level = 100
+        else:
+            next_lap_index = min(current_lap, len(race_weather) - 1) 
+            if race_weather[next_lap_index] >= 0 and race_weather[next_lap_index] < 30:
+                what_tire = str(random.randint(1,3))
+                self.current_tire.type_of_compound = settings.possible_tire_compounds.get(what_tire)
+                self.current_tire.deg_level = 100
+            elif race_weather[next_lap_index] >= 30 and race_weather[next_lap_index] < 60:
+                what_tire = "4"
+            elif race_weather[next_lap_index] >= 60 and race_weather[next_lap_index] < 75:
+                what_tire = str(random.randint(4,5))
+            elif race_weather[next_lap_index] >= 75:
+                what_tire = "5"
+            self.current_tire.type_of_compound = settings.possible_tire_compounds.get(what_tire)
+            self.current_tire.deg_level = 100
+
+
+
+def decide_tires_pit_stop():
+    while True:
+        ui.display_choose_tires_pit_stop()
+        print("Which tire: ")
+        decision = str(input())
+        if decision in ("1", "2", "3", "4", "5"):
+            break
+    return decision  
 
 
 def create_ai_drivers(track, grid):
@@ -158,14 +195,14 @@ def ai_decision(race_weather, grid, current_lap):
         if driver.is_player_controlled == True:
             continue
         tire = driver.current_tire.type_of_compound
-        good_tire  = False
-        if (tire in ("Soft", "Medium", "Hard") and water_level < 20) or (tire == "Inter" and water_level >= 20 or water_level <= 75) or (tire == "Wet" and water_level >= 60):
+        good_tire = False
+        if (tire in ("Soft", "Medium", "Hard") and water_level < 20) or (tire == "Inter" and (water_level >= 20 and water_level <= 75)) or (tire == "Wet" and water_level >= 60):
             good_tire = True
 
         
         if driver.current_tire.deg_level <= 35 or good_tire == False:
-            pass
-            # pitstop
+            decision = PIT
+            driver.drive_lap(decision, race_weather, current_lap)
         else:
             decision = random.choices([LIFT,PUSH],weights=[20,80])[0]
             driver.drive_lap(decision, race_weather, current_lap)
@@ -178,7 +215,7 @@ def check_puncture(grid):
         if deg_level <= 80 and deg_level > 50:
             puncture = random.choices([True,False],weights=[3,97])[0]
         elif deg_level <= 50 and deg_level > 30:
-            puncture = random.choices([True,False],weights=[8,92])[0]
+            puncture = random.choices([True,False],weights=[5,95])[0]
         elif deg_level <= 30:
             puncture = random.choices([True,False], weights=[90,10])[0]
 

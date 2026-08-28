@@ -125,7 +125,7 @@ def display_grid(is_race_on, grid):
         table.add_column("Wear", justify="right", style="green")
         table.add_column("Interval", style="bold white")
         table.add_column("Last Lap Time", style="cyan")
-        # table.add_column("Pit stops")
+        table.add_column("Pit stops", style="bold white")
 
     for pos, driver in enumerate(grid, start=1):
         name = driver.driver_name
@@ -134,13 +134,14 @@ def display_grid(is_race_on, grid):
         if is_race_on:
             wear = driver.current_tire.deg_level
             gap_to_leader = get_gap(pos, grid)
+            pit_stops = str(driver.number_of_pit_stops)
             row_style = ""
             if driver.is_player_controlled:
                 row_style = "blue_violet"
             last_lap_time = f"{round(driver.last_lap_time, 3)}s"
         
         if is_race_on:
-            table.add_row(str(pos),name, str(current_tire.type_of_compound), str(wear), gap_to_leader, last_lap_time, style=row_style)
+            table.add_row(str(pos),name, str(current_tire.type_of_compound), str(wear), gap_to_leader, last_lap_time, pit_stops, style=row_style)
         else:
             table.add_row(str(pos),name, str(current_tire.type_of_compound), style=row_style)
 
@@ -174,3 +175,17 @@ def display_new_race():
 
 def puncture_message():
     print(Panel("PUNCTURE", expand=False, border_style="white", style=" bold red"))
+
+def display_choose_tires_pit_stop():
+    table = Table(title="Choose tires")
+    table.add_column("Number", justify="right")
+    table.add_column("Tire Compound")
+    table.add_column("Weather Condition")
+
+    table.add_row("1", "Soft", "Dry", style="bold red")
+    table.add_row("2", "Medium", "Dry", style="bold yellow")
+    table.add_row("3", "Hard", "Dry", style="bold white")
+    table.add_row("4", "Inter", "Wet | 20-75%", style="bold green")
+    table.add_row("5", "Wet", "Wet | 60-100%", style="bold blue")
+
+    console.print(table)
